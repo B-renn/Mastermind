@@ -1,7 +1,7 @@
 ### Instructions
 1. Execute ruby mastermind.rb in the terminal to start the game
 2. Game will ask for players name
-3. The computer will 4 random colors, and it is your job to guess them in the correct order. There are 8 possible colors to choose from (RGBPOBW).
+3. The computer will generate 4 random colors, and it is your job to guess them in the correct order. There are 8 possible colors to choose from    (RGBPOBW).
 4. The program will prompt you to enter your guess. Enter 4 colors separated by commas --example-->  red,blue,green,orange
 5. The program will return hints on how good your guess was. It will tell you how many colors and positions you have guessed correctly.
 6. You have 12 attempts to guess the correct colors in the correct order ! Note: the computer can pick the same color more than once               --example-->  red,red,green,orange
