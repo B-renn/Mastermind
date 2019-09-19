@@ -27,13 +27,13 @@ class Mastermind
     @@round_count
     def initialize
         @computer = Computer.new
-        @player = Player.new("Player1",@computer)
+        @player = Player.new("Player1",@computer,@current_guess)
         @@round_count = 0
     end
     def play
         @player.change_name
         print "Hello #{@player.name}! Let's play Mastermind\n"
-        print @computer.computer_code
+        @computer.computer_code
         loop do 
             @player.guess
             @@round_count += 1
@@ -42,18 +42,28 @@ class Mastermind
     end
 
     def game_won
-        return true if @computer.analyze_guess(@player.guess)
+        if @computer.analyze_guess(@player.current_guess) == true
+          print "You won!"
+          return true 
+        end
     end
+
     def too_many_guesses
-        return true if @@round_count == 12
+        if @@round_count == 12
+          print "Too many guesses! You lost!"
+          print @computer.computer_code
+
+          return true 
+        end
     end
 end
 
 class Player
-    attr_accessor :name
-    def initialize(name,computer)
+    attr_accessor :name, :current_guess
+    def initialize(name,computer,current_guess)
         @name = name
-        @computer = computer 
+        @computer = computer
+        @current_guess = current_guess 
     end
 
     def change_name
@@ -64,9 +74,10 @@ class Player
 
     def guess
         print "Enter your guess for the 4 colors:\n"
-        player_guess = gets.chomp
-        guess = to_correct_array(player_guess)
+        player_input = gets.chomp
+        guess = to_correct_array(player_input)
         @computer.analyze_guess(guess)
+        @current_guess = guess
     end
 
     def to_correct_array(player_guess)
@@ -107,11 +118,46 @@ class Computer
         guess.length.times do |i|
             if guess[i] == @computer_code[i]
                 return_array[i] = "True"
+            else
+              return_array[i] = "False"
             end
         end
         return true if return_array.all? {|index| index == "True"}
+        any_color_correct?(guess)
+        any_position_correct?(guess)
     end
-end
+
+    def any_color_correct?(guess)
+        i_unique = nil
+        color_counter = 0 
+        @computer_code.length.times do |i|
+            guess.length.times do |j|
+                if @computer_code[i] == guess[j]
+                    if i_unique == nil || i_unique != i
+                        i_unique = i
+                        color_counter += 1
+                    end
+                end
+                if color_counter > 4
+                    color_counter = 4
+                end
+            end
+        end
+        print "You have #{color_counter} colors correct\n"  
+    end
+
+    def any_position_correct?(guess)
+        position_counter = 0
+        @computer_code.length.times do |i|
+            guess.length.times do |j|
+                if @computer_code[i] == guess[j] && i == j
+                    position_counter += 1
+                end
+            end
+        end  
+        print "You have #{position_counter} colors in the correct position\n"      
+        end
+    end
 
 game = Mastermind.new
 game.play
